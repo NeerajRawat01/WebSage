@@ -1,0 +1,59 @@
+services:
+  backend:
+    build: ./backend
+    volumes:
+      - ./backend:/app
+    container_name: websage-backend
+    ports:
+      - "8000:8000"
+    env_file: .env
+    depends_on:
+      - db
+      - redis
+
+  frontend:
+    build: ./frontend
+    container_name: websage-frontend
+    ports:
+      - "3000:3000"
+    env_file: .env
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:15
+    container_name: websage-db
+    restart: always
+    environment:
+      POSTGRES_USER: websage_user
+      POSTGRES_PASSWORD: websage_pass
+      POSTGRES_DB: websage_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: websage-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: websage-pgadmin
+    depends_on:
+      - db
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+
+volumes:
+  db_data:
