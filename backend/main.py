@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app.api.router import api_router
 from app.core.config import REDIS_URL
 from app.core.rate_limit import init_rate_limiter, shutdown_rate_limiter
@@ -7,6 +8,16 @@ redis_client = None
 
 
 app = FastAPI()
+
+# Optional CORS if browser hits backend directly (not needed if using Next.js proxy only)
+frontend_origin = "https://your-frontend.vercel.app"  # replace after deploy
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[frontend_origin],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def root():
