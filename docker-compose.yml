@@ -13,6 +13,13 @@ services:
 
   frontend:
     build: ./frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: yarn dev
+    environment:
+      NODE_ENV: development
+      BACKEND_URL: http://backend:8000
     container_name: websage-frontend
     ports:
       - "3000:3000"

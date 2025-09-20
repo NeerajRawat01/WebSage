@@ -1,6 +1,7 @@
 from pydantic import BaseModel, HttpUrl, Field
 from typing import List, Optional
 from datetime import datetime
+from datetime import datetime
 
 
 class AnalyzeRequest(BaseModel):
@@ -39,9 +40,20 @@ class QAItem(BaseModel):
 
 
 class AnalyzeResponse(BaseModel):
+    id: str
     url: HttpUrl
     analysis_timestamp: datetime
     company_info: CompanyInfoSchema
     extracted_answers: List[QAItem] = Field(default_factory=list)
+
+
+class AnalysisSummary(BaseModel):
+    id: str
+    url: HttpUrl
+    created_at: datetime
+    ai_provider: Optional[str] = None
+    model: Optional[str] = None
+    status: str
+    industry: Optional[str] = None
 
 
