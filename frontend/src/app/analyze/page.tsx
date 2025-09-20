@@ -132,7 +132,7 @@ export default function AnalyzePage() {
                             <Globe className="w-5 h-5 text-primary" />
                             Website Analysis
                         </CardTitle>
-                        <CardDescription>Provide a website URL and any specific questions you'd like answered</CardDescription>
+                        <CardDescription>Provide a website URL and any specific questions you’d like answered</CardDescription>
                     </CardHeader>
 
                     <CardContent className="space-y-6">
