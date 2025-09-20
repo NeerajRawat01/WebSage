@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Search, Globe, Brain, Sparkles, ArrowRight, Loader2 } from "lucide-react"
@@ -132,7 +131,7 @@ export default function AnalyzePage() {
                             <Globe className="w-5 h-5 text-primary" />
                             Website Analysis
                         </CardTitle>
-                        <CardDescription>Provide a website URL and any specific questions you’d like answered</CardDescription>
+                        <CardDescription>Provide a website URL and any specific questions you would like answered</CardDescription>
                     </CardHeader>
 
                     <CardContent className="space-y-6">

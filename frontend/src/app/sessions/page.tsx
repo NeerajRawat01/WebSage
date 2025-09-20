@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { History, Search, ExternalLink, MessageSquare, Calendar, Filter, Plus } from "lucide-react"
+import { History, Search, ExternalLink, Calendar, Filter, Plus } from "lucide-react"
 
 export default function SessionsPage() {
     const [searchQuery, setSearchQuery] = useState("")

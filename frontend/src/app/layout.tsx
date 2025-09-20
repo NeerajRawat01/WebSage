@@ -30,6 +30,14 @@ export default function RootLayout({
       >
         <Navigation />
         {children}
+        <footer className="mt-16 border-t border-border/50">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-sm text-muted-foreground flex flex-col sm:flex-row items-center justify-between gap-2">
+            <span>© {new Date().getFullYear()} WebSage. All rights reserved.</span>
+            <span>
+              Made with <span className="text-red-500">❤</span> by <a href="https://github.com/NeerajRawat01" target="_blank" rel="noreferrer" className="underline hover:text-foreground">Neeraj</a>
+            </span>
+          </div>
+        </footer>
       </body>
     </html>
   );
