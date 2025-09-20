@@ -32,7 +32,7 @@ See `backend/env.example` and `frontend/env.example`.
 
 ```mermaid
 flowchart LR
-  A[Browser (Next.js UI)] -->|/api/*| B[Next.js Serverless (Vercel)]
+  A[Browser (Next.js UI)] -->|API routes| B[Next.js Serverless (Vercel)]
   B -->|Authorization: Bearer API_SECRET_KEY| C[FastAPI Backend]
   C --> D[(PostgreSQL)]
   C -->|LLM API| E[(OpenAI/Gemini)]
