@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 export async function GET(req: Request, { params }: any) {
   const backendUrl = process.env.BACKEND_URL || "http://localhost:8000";
   const secret = process.env.API_SECRET_KEY;
