@@ -19,7 +19,7 @@ services:
     command: yarn dev
     environment:
       NODE_ENV: development
-      BACKEND_URL: http://backend:8000
+      NEXT_PUBLIC_BACKEND_URL: http://backend:8000
     container_name: websage-frontend
     ports:
       - "3000:3000"

@@ -2,7 +2,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
   const body = await req.json();
-  const backendUrl = process.env.BACKEND_URL || "http://localhost:8000";
+  const backendUrl =
+    process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
   const secret = process.env.API_SECRET_KEY;
 
   if (!secret) {
