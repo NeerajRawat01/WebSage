@@ -12,17 +12,22 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
-
-  const res = await fetch(`${backendUrl}/analyze`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${secret}`,
-    },
-    body: JSON.stringify(body),
-    cache: "no-store",
-  });
-
-  const data = await res.json().catch(() => ({}));
-  return new Response(JSON.stringify(data), { status: res.status });
+  try {
+    const res = await fetch(`${backendUrl}/analyze`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${secret}`,
+      },
+      body: JSON.stringify(body),
+      cache: "no-store",
+    });
+    const data = await res.json().catch(() => ({}));
+    return new Response(JSON.stringify(data), { status: res.status });
+  } catch (e: any) {
+    const message = e?.message || "Upstream fetch failed";
+    return new Response(JSON.stringify({ error: message, backendUrl }), {
+      status: 502,
+    });
+  }
 }

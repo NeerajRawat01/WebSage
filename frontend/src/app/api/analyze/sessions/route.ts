@@ -7,11 +7,18 @@ export async function GET() {
   if (!secret) {
     return new Response(JSON.stringify([]), { status: 200 });
   }
-  const res = await fetch(`${backendUrl}/analyze/sessions`, {
-    method: "GET",
-    headers: { Authorization: `Bearer ${secret}` },
-    cache: "no-store",
-  });
-  const data = await res.json().catch(() => []);
-  return new Response(JSON.stringify(data), { status: res.status });
+  try {
+    const res = await fetch(`${backendUrl}/analyze/sessions`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${secret}` },
+      cache: "no-store",
+    });
+    const data = await res.json().catch(() => []);
+    return new Response(JSON.stringify(data), { status: res.status });
+  } catch (e: any) {
+    const message = e?.message || "Upstream fetch failed";
+    return new Response(JSON.stringify({ error: message, backendUrl }), {
+      status: 502,
+    });
+  }
 }
