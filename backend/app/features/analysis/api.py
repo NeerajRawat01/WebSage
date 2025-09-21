@@ -51,18 +51,7 @@ async def analyze_endpoint(
     # 1) SSRF guard + resolve
     normalized_url, _ = validate_url_and_resolve(str(payload.url))
 
-    # 2) robots.txt check (fail-open policy can be tuned later)
-    if not can_fetch(SCRAPER_USER_AGENT, normalized_url):
-        now = datetime.now(timezone.utc)
-        return AnalyzeResponse(
-            id=str(uuid.uuid4()),
-            url=normalized_url,
-            analysis_timestamp=now,
-            company_info=CompanyInfoSchema(),
-            extracted_answers=[],
-        )
-
-    # 3) Fetch HTML (we will parse minimal info)
+    # 2) Fetch HTML (we will parse minimal info)
     try:
         final_url, status_code, html = await fetch_url(
             normalized_url,
@@ -381,3 +370,4 @@ async def get_session(id: str, db: Session = Depends(get_db)):
         extracted_answers=extracted_answers,
     )
 
+image.png
