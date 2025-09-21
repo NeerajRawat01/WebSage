@@ -1,5 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import os
+from alembic import command as alembic_command
+from alembic.config import Config as AlembicConfig
 from app.api.router import api_router
 from app.core.config import REDIS_URL
 from app.core.rate_limit import init_rate_limiter, shutdown_rate_limiter
@@ -31,7 +34,25 @@ def health_check():
 @app.on_event("startup")
 async def on_startup():
     global redis_client
-    redis_client = await init_rate_limiter(REDIS_URL)
+    # 1) Run DB migrations automatically (helps on platforms without shell access)
+    try:
+        db_url = os.getenv("DATABASE_URL", "")
+        cfg = AlembicConfig()
+        cfg.set_main_option("script_location", "migrations")
+        if db_url:
+            cfg.set_main_option("sqlalchemy.url", db_url)
+        alembic_command.upgrade(cfg, "head")
+        print("[Startup] Alembic migrations applied successfully")
+    except Exception as e:
+        print(f"[Startup] Alembic migration skipped/failed: {e}")
+
+    # 2) Init rate limiter (best-effort)
+    try:
+        redis_client = await init_rate_limiter(REDIS_URL)
+        print("[Startup] Rate limiter initialized")
+    except Exception as e:
+        redis_client = None
+        print(f"[Startup] Rate limiter disabled: {e}")
 
 
 @app.on_event("shutdown")
