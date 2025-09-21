@@ -74,11 +74,11 @@ export default function SessionDetailsPage() {
                     if (!res.ok) throw new Error("Failed to load sessions")
                     const data: SessionSummary[] = await res.json()
                     if (cancelled) return
-                    const found = data.find((s) => s.id === params.id) || null
+                    const found = data.find((s) => s.id === params?.id) || null
                     if (!found) throw new Error("Session not found")
                     setSessionSummary(found)
                     // Load detailed analysis for insights and extracted answers
-                    const dr = await fetch(`/api/analyze/sessions/${params.id}`, { cache: "no-store" })
+                    const dr = await fetch(`/api/analyze/sessions/${params?.id}`, { cache: "no-store" })
                     if (dr.ok) {
                         const d: AnalyzeDetail = await dr.json()
                         if (!cancelled) {
@@ -86,7 +86,7 @@ export default function SessionDetailsPage() {
                         }
                     }
                     // Load conversation history for this session
-                    const hr = await fetch(`/api/converse/history/${params.id}`, { cache: "no-store" })
+                    const hr = await fetch(`/api/converse/history/${params?.id}`, { cache: "no-store" })
                     if (hr.ok) {
                         const hist: Array<{ user_query: string; agent_response: string; created_at: string }> = await hr.json()
                         if (!cancelled) {
@@ -105,7 +105,7 @@ export default function SessionDetailsPage() {
         return () => {
             cancelled = true
         }
-    }, [params.id])
+    }, [params?.id])
 
     const handleAskFollowUp = async () => {
         if (!followUpQuestion.trim()) return
@@ -122,7 +122,7 @@ export default function SessionDetailsPage() {
             const res = await fetch("/api/converse", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ session_id: params.id, query: followUpQuestion }),
+                body: JSON.stringify({ session_id: params?.id, query: followUpQuestion }),
             })
             const data: ConverseResponse = await res.json()
             if (!res.ok) throw new Error((data as any)?.detail || (data as any)?.error || "Request failed")
@@ -181,7 +181,7 @@ export default function SessionDetailsPage() {
     const sessionData = useMemo(() => {
         return {
             session: {
-                id: params.id,
+                id: params?.id,
                 url: analysis?.url || detail?.url || sessionSummary?.url || "-",
                 created_at: sessionSummary?.created_at ? formatDate(sessionSummary.created_at) : "-",
                 status: sessionSummary?.status || "-",
@@ -211,7 +211,7 @@ export default function SessionDetailsPage() {
             extracted_qa: detail?.extracted_answers || [],
             conversation_history: conversation,
         }
-    }, [sessionSummary, analysis, detail, conversation, params.id])
+    }, [sessionSummary, analysis, detail, conversation, params?.id])
 
     return (
         <div className="grid grid-cols-1 mx-auto gap-6 px-4 sm:px-6 lg:px-8 py-8 max-w-6xl">

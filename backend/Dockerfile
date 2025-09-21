@@ -13,8 +13,8 @@ RUN python -m playwright install --with-deps chromium || true
 # Copy the backend code
 COPY . .
 
-# Expose a default port (platforms like Render provide $PORT at runtime)
-EXPOSE 10000
+# Expose default FastAPI port 8000 (and allow override via $PORT)
+EXPOSE 8000
 
-# Run FastAPI with uvicorn; bind to $PORT if provided
-CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-10000}"]
+# Run FastAPI with uvicorn; bind to $PORT if provided (default 8000)
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]

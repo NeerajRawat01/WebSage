@@ -10,10 +10,10 @@ redis_client = None
 app = FastAPI()
 
 # Optional CORS if browser hits backend directly (not needed if using Next.js proxy only)
-frontend_origin = "https://your-frontend.vercel.app"  # replace after deploy
+frontend_origin = "https://web-sage-scrape.vercel.app/"  # replace after deploy
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[frontend_origin],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
