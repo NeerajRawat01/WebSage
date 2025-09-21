@@ -39,6 +39,22 @@ class GeminiProvider(AIProvider):
                 "target_audience": data.get("target_audience"),
             }
         except Exception:
+            # Try to salvage JSON substring between first '{' and last '}'
+            try:
+                start = content.find("{")
+                end = content.rfind("}")
+                if start != -1 and end != -1 and end > start:
+                    import json
+
+                    data = json.loads(content[start : end + 1])
+                    return {
+                        "industry": data.get("industry"),
+                        "company_size": data.get("company_size"),
+                        "location": data.get("location"),
+                        "target_audience": data.get("target_audience"),
+                    }
+            except Exception:
+                pass
             return {"industry": None, "company_size": None, "location": None, "target_audience": None}
 
     async def answer_questions(self, context_text: str, questions: List[str]) -> List[Dict[str, str]]:

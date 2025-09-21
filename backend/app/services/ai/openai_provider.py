@@ -31,6 +31,7 @@ class OpenAIProvider(AIProvider):
                 {"role": "user", "content": prompt},
             ],
             temperature=0.2,
+            response_format={"type": "json_object"},
         )
         content = resp.choices[0].message.content or "{}"
         try:

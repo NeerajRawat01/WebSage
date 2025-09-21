@@ -44,8 +44,8 @@ def extract_main_text(html: str) -> Optional[str]:
         doc = Document(html)
         summary_html = doc.summary(html_partial=True)
         tree = HTMLParser(summary_html)
-        # Remove script/style/nav
-        for sel in ("script", "style", "nav", "footer", "header"):  # best-effort cleanup
+        # Remove script/style/nav (keep header/footer so addresses in footer aren't lost)
+        for sel in ("script", "style", "nav"):  # best-effort cleanup
             for n in tree.css(sel):
                 n.decompose()
         text = tree.text(separator=" ")

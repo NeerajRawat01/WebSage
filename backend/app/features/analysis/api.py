@@ -100,17 +100,36 @@ async def analyze_endpoint(
         emails = extract_emails(html)
         phones = extract_phone_numbers(html)
         socials = extract_social_links(html)
-        if emails or phones or any(socials.values()):
+        # Deterministic DOM-based location extraction before LLM
+        dom_location: str | None = None
+        try:
+            from app.services.scraper.extract_contact import extract_dom_location
+
+            dom_location = extract_dom_location(html)
+        except Exception:
+            dom_location = None
+        if emails or phones or any(socials.values()) or dom_location:
             company.contact_info = {
                 "email": emails[0] if emails else None,
                 "phone": phones[0] if phones else None,
                 "social_media": socials,
             }
+            if dom_location and not getattr(company, "location", None):
+                company.location = dom_location
 
         # 5) Main text extraction and AI inference (if key provided)
         main_text = extract_main_text(html)
-        print(f"[Analyze] main_text length: {len(main_text) if main_text else 0}")
-        if main_text:
+        # Build fallback context from title/meta if main_text is empty
+        fallback_context = None
+        if not main_text:
+            parts = []
+            if title:
+                parts.append(title)
+            if meta:
+                parts.append(meta)
+            fallback_context = "\n\n".join(parts) if parts else None
+        print(f"[Analyze] main_text length: {len(main_text) if main_text else 0} | fallback_context length: {len(fallback_context) if fallback_context else 0}")
+        if main_text or fallback_context:
             try:
                 print(
                     f"[Analyze] AI_PROVIDER={AI_PROVIDER} has_openai={bool(OPENAI_API_KEY)} has_gemini={bool(os.getenv('GEMINI_API_KEY'))}"
@@ -125,18 +144,38 @@ async def analyze_endpoint(
                     ai = None
 
                 if ai:
-                    inferred = await ai.infer_company_attributes(main_text)
+                    context_for_ai = main_text or fallback_context or ""
+                    inferred = await ai.infer_company_attributes(context_for_ai)
                     print(f"[Analyze] Inferred attributes: {inferred}")
-                    company.industry = inferred.get("industry")
-                    company.company_size = inferred.get("company_size")
-                    company.location = inferred.get("location")
-                    company.target_audience = inferred.get("target_audience")
+                    ind = inferred.get("industry")
+                    if ind:
+                        company.industry = ind
+                    size = inferred.get("company_size")
+                    if size:
+                        company.company_size = size
+                    loc = inferred.get("location")
+                    if loc:
+                        company.location = loc
+                    ta = inferred.get("target_audience")
+                    if ta:
+                        company.target_audience = ta
 
-                    if payload.questions:
+                    if payload.questions and main_text:
                         answers = await ai.answer_questions(main_text, payload.questions)
                         print(f"[Analyze] Answered {len(answers)} questions")
             except Exception as e:
                 print(f"[Analyze] AI inference error: {e}")
+
+        # 5b) Heuristic location extraction if LLM did not provide it
+        if (not getattr(company, "location", None)) and main_text:
+            try:
+                from app.services.scraper.extract_contact import extract_location
+
+                guessed = extract_location(main_text)
+                if guessed and not company.location:
+                    company.location = guessed
+            except Exception as _:
+                pass
 
     # Persist to DB
     try:
