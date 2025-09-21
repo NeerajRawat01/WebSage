@@ -369,5 +369,3 @@ async def get_session(id: str, db: Session = Depends(get_db)):
         company_info=company,
         extracted_answers=extracted_answers,
     )
-
-image.png
